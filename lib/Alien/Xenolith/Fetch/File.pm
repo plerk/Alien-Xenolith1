@@ -66,8 +66,7 @@ archive.
 sub local_archive_location
 {
   my($self, $filename) = @_;
-  File::Spec->catfile($self->{dir}, $filename);   
-  
+  File::Spec->catfile($self->{dir}, $filename);  
 }
 
 1;
