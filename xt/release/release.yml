@@ -6,6 +6,7 @@ pod_spelling_system:
     - Xenolith
     - CMake
     - Autoconf
+    - versioncmp
 
 pod_coverage:
   # format is "Class#method" or "Class", regex allowed

@@ -5,13 +5,13 @@ use warnings;
 use base qw( Alien::Xenolith::Fetch );
 use Carp qw( croak );
 use File::Spec;
-use constant requires => {
-  'Sort::Versions'   => 0,
-  'Archive::Extract' => 0,
-};
+use Alien::Xenolith::Base;
 
 # ABSTRACT: Local file fetch class for Xenolith
 # VERSION
+
+with 'Alien::Xenolith::Role::Archive';
+needs 'Archive::Extract' => 0;
 
 =head1 METHODS
 
@@ -45,14 +45,6 @@ sub new
   $self;
 }
 
-sub _cmp
-{
-  my($a,$b) = @_;
-  $a =~ s/^.*?(\d)/$1/;
-  $b =~ s/^.*?(\d)/$1/;
-  Sort::Versions::versioncmp($a,$b);
-}
-
 =head2 list
 
  my @list = $fetch->list;
@@ -79,7 +71,7 @@ sub list
     @list = grep { $_ =~ $self->{filter} } @list;
   }
   
-  sort { _cmp($a,$b) } @list;
+  @list;
 }
 
 =head2 extract

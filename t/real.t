@@ -49,8 +49,8 @@ subtest 'File' => sub {
       
       isa_ok $fetch, 'Alien::Xenolith::Fetch::File';
 
-      eval { $fetch->init };
-      is $@, '', 'init';
+      eval { $fetch->_init };
+      is $@, '', '_init';
 
       my @list = eval { $fetch->list };
       diag $@ if $@;

@@ -56,8 +56,8 @@ foreach my $testname ('regex filter', 'string filter', 'subref filter')
 
     isa_ok $fetch, 'Alien::Xenolith::Fetch::File';
     
-    eval { $fetch->init };
-    is $@, '', 'init';
+    eval { $fetch->_init };
+    is $@, '', '_init';
 
     my @list = eval { $fetch->list };
     diag $@ if $@;
