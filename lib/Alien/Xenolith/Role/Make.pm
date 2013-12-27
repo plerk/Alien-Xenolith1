@@ -42,8 +42,8 @@ requires 'build_dir';
 
 sub _wrapper
 {
-  my $cb = shift;
-  if($^O eq 'MSWin32')
+  my($class, $cb) = @_;
+  if($^O eq 'MSWin32' && $class eq 'Alien::Xenolith::Builder::Autoconf')
   {
     Alien::MSYS::msys($cb);
   }
@@ -59,7 +59,7 @@ default make => sub
   local $CWD = $self->build_dir;
   my $make = $self->{make_path};
   print "$make @args\n";
-  _wrapper(sub {
+  _wrapper(ref($self), sub {
     system $make, @args;
     if($? == -1)
     { die "make failed to execute $!" }

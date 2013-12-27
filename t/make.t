@@ -10,9 +10,12 @@ use Capture::Tiny qw( capture_merged );;
 eval '# line '. __LINE__ . ' "' . __FILE__ . qq("\n) . q{
   local $CWD = tempdir( CLEANUP => 1 );
   my $fh;
+  open($fh, '>', 'Util.pm');
+  print $fh "sub go { exit 0 }\n1;";
+  close $fh;
   open($fh, '>', 'Makefile');
   print $fh "all:\n";
-  print $fh "\tperl -e 'exit 0'\n";
+  print $fh "\tperl -MUtil -e go\n";
   close $fh;
   capture_merged {
     system $Config{make}, 'all';
@@ -27,15 +30,25 @@ note "dir = $dir";
 
 do {
   my $fh;
+  open($fh, '>', File::Spec->catfile($dir, "Util.pm"));
+  print $fh '# line '. __LINE__ . ' "' . __FILE__ . qq("\n) . <<EOF1;
+    use strict;
+    use warnings;
+    my \$fh;
+    open \$fh, '>', \$ARGV[0];
+    sub print_all     { print \$fh "all" }
+    sub print_install { print \$fh "install:\$ARGV[1]" }
+EOF1
+  close $fh;
   open($fh, '>', File::Spec->catfile($dir, 'Makefile'));
-  print $fh <<EOF;
+  print $fh <<EOF2;
 all:
-\tperl -e 'print "all"' > all.txt
+\tperl -MUtil -e print_all all
 
 install:
-\tperl -e 'print "install:" . shift \@ARGV' \$(DEST_DIR) > install.txt
+\tperl -MUtil -e print_install install \$(DEST_DIR)
 
-EOF
+EOF2
   close $fh;
 };
 
@@ -48,34 +61,25 @@ isa_ok $builder, 'Alien::Xenolith::Builder';
 my $error;
 my $out;
 
-$out = capture_merged {
+note capture_merged {
   eval { $builder->build };
   $error = $@;
 };
 is $error, '', 'build';
-if($error)
-{
-  diag $out;
-  diag $error;
-}
 
-$out = capture_merged {
+note capture_merged {
   eval { $builder->stage('/foo/bar') };
   $error = $@;
 };
 is $error, '', 'stage';
-if($error)
-{
-  diag $out;
-  diag $error;
-}
 
 my $data = do {
   my $fh;
-  open($fh, '<', File::Spec->catfile($dir, 'install.txt'));
+  open($fh, '<', File::Spec->catfile($dir, 'install'));
   my $data = <$fh>;
   close $fh;
   $data;
 };
 
 is $data, 'install:/foo/bar', 'DEST_DIR';
+
