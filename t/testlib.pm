@@ -3,8 +3,19 @@ use warnings;
 use FindBin;
 use File::Spec;
 
+sub _mock ()
+{
+  my $caller = caller;
+  my @name = split /::/, $caller;
+  $name[-1] .= '.pm';
+  $INC{join '/', @name} = __FILE__;
+  $INC{File::Spec->catdir(@name)} = __FILE__;
+}
+
 package
   Sort::Versions;
+
+main::_mock();
 
 sub versioncmp
 {
@@ -26,12 +37,10 @@ sub versioncmp
   die "Don't know how to compare $a and $b";
 }
 
-$INC{'Sort/Versions.pm'} = __FILE__;
-
 package
   Archive::Extract;
 
-$INC{'Archive/Extract.pm'} = __FILE__;
+main::_mock();
 
 sub new
 {
@@ -48,6 +57,8 @@ sub extract
 
 package
   HTTP::Tiny;
+
+main::_mock();
 
 sub new
 {
@@ -101,10 +112,10 @@ EOF
   die "nope $uri";
 }
 
-$INC{'HTTP/Tiny.pm'} = __FILE__;
-
 package
   URI;
+
+main::_mock();
 
 use overload '""' => sub { ${$_[0]} };
 
@@ -141,8 +152,6 @@ sub path_segments
   }
   die "oops";
 }
-
-$INC{'URI.pm'} = __FILE__;
 
 package
   main;
