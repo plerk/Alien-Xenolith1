@@ -3,7 +3,7 @@ use warnings;
 use FindBin;
 use File::Spec;
 use File::Temp qw( tempdir );
-use Test::More tests => 2;
+use Test::More tests => 3;
 use Alien::Xenolith::Fetch;
 
 sub note_needs ($)
@@ -20,7 +20,7 @@ sub note_needs ($)
 
 Alien::Xenolith::Fetch->fetch_tempdir(tempdir( CLEANUP => 1 ));
 
-foreach my $type (qw( File FTP ))
+foreach my $type (qw( File FTP HTTP ))
 {
   subtest $type => sub {
     if($type eq 'File')
@@ -38,6 +38,17 @@ foreach my $type (qw( File FTP ))
         unless eval q{ use URI; 1 };
       plan skip_all => 'test requires an FTP server (set ALIEN_XENOLITH_DEV_TEST_FTP to the correct URI)'
         unless $ENV{ALIEN_XENOLITH_DEV_TEST_FTP};
+    }
+    elsif($type eq 'HTTP')
+    {
+      plan skip_all => 'test requires HTTP::Tiny'
+        unless eval q{ use HTTP::Tiny; 1 };
+      plan skip_all => 'test requires URI'
+        unless eval q{ use URI; 1 };
+      plan skip_all => 'test requires HTML::Parser'
+        unless eval q{ use HTML::Parser; 1 };
+      plan skip_all => 'test requires an HTTP server (set ALIEN_XENOLITH_DEV_TEST_HTTP to the correct URI)'
+        unless $ENV{ALIEN_XENOLITH_DEV_TEST_HTTP};
     }
     plan tests => 5;
 
@@ -81,10 +92,10 @@ foreach my $type (qw( File FTP ))
             filter      => $filter,
           );
         }
-        elsif($type eq 'FTP')
+        elsif($type =~ /^(FTP|HTTP)$/)
         {
-          $fetch = Alien::Xenolith::Fetch::FTP->new(
-            uri         => $ENV{ALIEN_XENOLITH_DEV_TEST_FTP},
+          $fetch = "Alien::Xenolith::Fetch::$type"->new(
+            uri         => $ENV{"ALIEN_XENOLITH_DEV_TEST_$type"},
             filter      => $filter,
           );
         }
@@ -125,10 +136,10 @@ foreach my $type (qw( File FTP ))
           filter      => 'libbar',
         );
       }
-      elsif($type eq 'FTP')
+      elsif($type =~ /^(FTP|HTTP)$/)
       {
-        $fetch = Alien::Xenolith::Fetch::FTP->new(
-          uri         => $ENV{ALIEN_XENOLITH_DEV_TEST_FTP},
+        $fetch = "Alien::Xenolith::Fetch::$type"->new(
+          uri         => $ENV{"ALIEN_XENOLITH_DEV_TEST_$type"},
           filter      => 'libbar',
         );
       }

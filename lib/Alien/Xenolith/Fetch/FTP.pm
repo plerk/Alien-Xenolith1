@@ -23,14 +23,14 @@ needs 'URI'      => 0;
    uri => 'ftp://example.com/path/to/dir',
  );
 
-Returns a new instance of the file fetch class.
+Returns a new instance of the ftp fetch class.
 
 =cut
 
 sub new
 {
   my($class, %args) = @_;
-  my $uri = delete $args{uri};
+  my $uri = delete $args{uri} || croak "requires uri argument";
   my $self = $class->SUPER::new(%args);
   $self->{uri} = $uri;
   $self;
