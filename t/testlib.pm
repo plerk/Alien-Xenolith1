@@ -9,7 +9,6 @@ sub _mock ()
   my @name = split /::/, $caller;
   $name[-1] .= '.pm';
   $INC{join '/', @name} = __FILE__;
-  $INC{File::Spec->catdir(@name)} = __FILE__;
 }
 
 package

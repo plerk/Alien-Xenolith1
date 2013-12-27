@@ -43,10 +43,8 @@ sub _init
   my($self) = @_;
   foreach my $class (keys %{ shift->_needs_hash })
   {
-    my @filename = split /::/, $class;
-    $filename[-1] .= '.pm';
-    my $filename = File::Spec->catfile(@filename);
-    require $filename;
+    eval qq{ use $class () };
+    die $@ if $@;
   } 
 }
 
