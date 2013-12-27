@@ -3,9 +3,9 @@ use warnings;
 use Test::More tests => 6;
 use Alien::Xenolith::Base;
 use Alien::Xenolith::Fetch;
-use Alien::Xenolith::Installer;
+use Alien::Xenolith::Builder;
 
-foreach my $class (map { "Alien::Xenolith::$_" } qw( Base Fetch Installer ))
+foreach my $class (map { "Alien::Xenolith::$_" } qw( Base Fetch Builder ))
 {
   can_ok $class, '_init';
   eval { $class->new };

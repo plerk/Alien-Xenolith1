@@ -4,10 +4,10 @@ use Test::More tests => 12;
 
 use_ok 'Alien::Xenolith';
 use_ok 'Alien::Xenolith::Base';
-use_ok 'Alien::Xenolith::Installer';
-use_ok 'Alien::Xenolith::Installer::Autoconf';
-use_ok 'Alien::Xenolith::Installer::Make';
-use_ok 'Alien::Xenolith::Installer::CMake';
+use_ok 'Alien::Xenolith::Builder';
+use_ok 'Alien::Xenolith::Builder::Autoconf';
+use_ok 'Alien::Xenolith::Builder::Make';
+use_ok 'Alien::Xenolith::Builder::CMake';
 use_ok 'Alien::Xenolith::Fetch';
 use_ok 'Alien::Xenolith::Fetch::FTP';
 use_ok 'Alien::Xenolith::Fetch::HTTP';

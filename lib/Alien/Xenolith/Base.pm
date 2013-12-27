@@ -5,7 +5,7 @@ use warnings;
 use Carp qw( croak );
 use File::Spec;
 
-# ABSTRACT: base class for Xenolith installer and fetch classes
+# ABSTRACT: base class for Xenolith builder and fetch classes
 # VERSION
 
 =head1 METHODS
@@ -20,7 +20,7 @@ sub new
 {
   my $class = shift;
   croak "cannot create instance of abstract class"
-    if $class =~ /^Alien::Xenolith::(Fetch|Installer|Base)$/;
+    if $class =~ /^Alien::Xenolith::(Fetch|Builder|Base)$/;
   bless {}, $class;
 }
 
