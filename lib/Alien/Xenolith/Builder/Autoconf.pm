@@ -13,6 +13,16 @@ requires 'Alien::MSYS' => 0 if $^O eq 'MSWin32';
 # ABSTRACT: Autoconf builder class for Xenolith
 # VERSION
 
+=head1 METHODS
+
+=head2 build
+
+ $builder->build;
+
+runs ./configure and make
+
+=cut
+
 sub build
 {
   my($self) = @_;

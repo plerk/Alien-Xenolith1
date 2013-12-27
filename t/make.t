@@ -30,10 +30,10 @@ do {
   open($fh, '>', File::Spec->catfile($dir, 'Makefile'));
   print $fh <<EOF;
 all:
-	perl -e 'print "all"' > all.txt
+\tperl -e 'print "all"' > all.txt
 
 install:
-	perl -e 'print "install:" . shift \@ARGV' \$(DEST_DIR) > install.txt
+\tperl -e 'print "install:" . shift \@ARGV' \$(DEST_DIR) > install.txt
 
 EOF
   close $fh;
