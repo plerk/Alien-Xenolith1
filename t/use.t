@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 11;
+use Test::More tests => 12;
 
 use_ok 'Alien::Xenolith';
 use_ok 'Alien::Xenolith::Base';
@@ -14,3 +14,4 @@ use_ok 'Alien::Xenolith::Fetch::HTTP';
 use_ok 'Alien::Xenolith::Fetch::File';
 
 use_ok 'Alien::Xenolith::Role::Archive';
+use_ok 'Alien::Xenolith::Role::Filter';

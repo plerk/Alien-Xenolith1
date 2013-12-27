@@ -59,6 +59,7 @@ sub _needs ($;$)
 }
 
 my %around;
+my %subs;
 
 sub _with ($)
 {
@@ -80,6 +81,22 @@ sub _with ($)
     no warnings 'redefine';
     *{join '::', $caller, $name} = $new;
   }
+  
+  while(my($name,$sub) = each %{ $subs{$class} })
+  {
+    next if $caller->can($name);
+    if(defined $sub)
+    {
+      no strict 'refs';
+      *{join '::', $caller, $name} = $sub;
+    }
+    else
+    {
+      croak "$class requires $name to be implemented";
+    }
+  }
+  
+  return;
 }
 
 sub _around ($$)
@@ -87,6 +104,23 @@ sub _around ($$)
   my($name, $sub) = @_;
   my $caller = caller;
   $around{$caller}->{$name} = $sub;
+  return;
+}
+
+sub _requires ($)
+{
+  my($name) = @_;
+  my $caller = caller;
+  $subs{$caller}->{$name} = undef;
+  return;
+}
+
+sub _default ($$)
+{
+  my($name, $sub) = @_;
+  my $caller = caller;
+  $subs{$caller}->{$name} = $sub;
+  return;
 }
 
 sub import
@@ -98,6 +132,9 @@ sub import
   *{join '::', $caller, 'needs'}    = \&_needs;
   *{join '::', $caller, 'with'}     = \&_with;
   *{join '::', $caller, 'around'}   = \&_around;
+  *{join '::', $caller, 'requires'} = \&_requires;
+  *{join '::', $caller, 'default'}  = \&_default;
+  return;
 }
 
 1;

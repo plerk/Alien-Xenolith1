@@ -11,7 +11,7 @@ use Alien::Xenolith::Base;
 # VERSION
 
 with 'Alien::Xenolith::Role::Archive';
-needs 'Archive::Extract' => 0;
+with 'Alien::Xenolith::Role::Filter';
 
 =head1 METHODS
 
@@ -27,21 +27,10 @@ Returns a new instance of the file fetch class.
 
 sub new
 {
-  my $self = shift->SUPER::new;
-  my %args = @_;
-  
-  $self->{dir}    = $args{dir} || croak "dir is a required argument";
-  $self->{filter} = $args{filter};
-  
-  if(defined $self->{filter})
-  {
-    $self->{filter} = qr{$args{filter}}
-      unless ref $self->{filter};
-  }
-  else
-  {
-    $self->{filter} = sub { 1 };
-  }
+  my($class, %args) = @_;
+  my $dir = delete $args{dir} || croak "dir is a required argument";
+  my $self = $class->SUPER::new(%args);
+  $self->{dir} = $dir;
   $self;
 }
 
@@ -60,61 +49,25 @@ sub list
   my $dir = $self->{dir};
   opendir($dh, $self->{dir}) || die "unable to read $dir $!";
   my @list = grep !/^\./, readdir $dh;
-  closedir $dh;
-  
-  if(ref $self->{filter} eq 'CODE')
-  {
-    @list = grep { $self->{filter}->($_) } @list;
-  }
-  else
-  {
-    @list = grep { $_ =~ $self->{filter} } @list;
-  }
-  
+  closedir $dh;  
   @list;
 }
 
-=head2 extract
+=head2 local_archive_location
 
- $fetch->extract($filename, $directory);
+ my $path = $fetch->local_archive_location
 
-Extract the given archive ($filename must be one of the values
-returned by the L<list|Alien::Xenolith::Fetch::File#list> method)
-to the given directory (if $directory is not specified, then
-it will use the current directory).
+Returns a copy of the archive available on a local filesystem.
+For the File fetch class, this is the location of the original
+archive.
 
 =cut
 
-sub extract
+sub local_archive_location
 {
-  my($self, $filename, $location) = @_;
+  my($self, $filename) = @_;
+  File::Spec->catfile($self->{dir}, $filename);   
   
-  $location = File::Spec->curdir
-    unless defined $location;
-  
-  my $archive = File::Spec->catfile($self->{dir}, $filename); 
-  
-  my $ae = Archive::Extract->new(
-    archive => File::Spec->catfile($self->{dir}, $filename),
-  );
-  
-  $ae->extract( to => $location ) || return;
-
-  my $dh;
-  opendir $dh, $location;
-  my @list = grep !/^\./, readdir $dh;
-  closedir $dh;
-  
-  return unless @list;
-  
-  if(@list > 1)
-  {
-    return $location;
-  }
-  else
-  {
-    return File::Spec->catdir($location, $list[0]);
-  }
 }
 
 1;
