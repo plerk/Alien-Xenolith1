@@ -43,13 +43,28 @@ sub build
   my($self) = @_;
   do {
     local $CWD = $self->build_dir;
-    system './configure', '--prefix=/foo';
-    if($? == -1)
-    { die "make failed to execute $!" }
-    elsif($? & 127)
-    { die "died with signal " . $? & 127 }
-    elsif($?)
-    { die "exited with return " . $? >> 8 }
+    if($^O eq 'MSWin32')
+    {
+      Alien::MSYS::msys(sub {
+        system 'sh', 'configure', '--prefix=/foo';
+        if($? == -1)
+        { die "make failed to execute $!" }
+        elsif($? & 127)
+        { die "died with signal " . ($? & 127) }
+        elsif($?)
+        { die "exited with return " . ($? >> 8) }
+      });
+    }
+    else
+    {
+      system './configure', '--prefix=/foo';
+      if($? == -1)
+      { die "make failed to execute $!" }
+      elsif($? & 127)
+      { die "died with signal " . ($? & 127) }
+      elsif($?)
+      { die "exited with return " . ($? >> 8) }
+    }
   };
   $self->make;
 }

@@ -40,17 +40,34 @@ around new => sub
 
 requires 'build_dir';
 
+sub _wrapper
+{
+  my $cb = shift;
+  if($^O eq 'MSWin32')
+  {
+    Alien::MSYS::msys($cb);
+  }
+  else
+  {
+    $cb->();
+  }
+}
+
 default make => sub
 {
   my($self, @args) = @_;
   local $CWD = $self->build_dir;
-  system $self->{make_path}, @args;
-  if($? == -1)
-  { die "make failed to execute $!" }
-  elsif($? & 127)
-  { die "died with signal " . ($? & 127) }
-  elsif($?)
-  { die "exited with return " . ($? >> 8) }
+  my $make = $self->{make_path};
+  print "$make @args\n";
+  _wrapper(sub {
+    system $make, @args;
+    if($? == -1)
+    { die "make failed to execute $!" }
+    elsif($? & 127)
+    { die "died with signal " . ($? & 127) }
+    elsif($?)
+    { die "exited with return " . ($? >> 8) }
+  });
   return;
 };
 

@@ -16,15 +16,25 @@ note "dir = $dir";
 
 do {
   my $fh;
+  open($fh, '>', File::Spec->catfile($dir, "Util.pm"));
+  print $fh '# line '. __LINE__ . ' "' . __FILE__ . qq("\n) . <<EOF1;
+    use strict;
+    use warnings;
+    my \$fh;
+    open \$fh, '>', \$ARGV[0];
+    sub print_all     { print \$fh "all" }
+    sub print_install { print \$fh "install:\$ENV{DEST_DIR}" }
+EOF1
+  close $fh;
   open($fh, '>', File::Spec->catfile($dir, 'Makefile.stuff'));
-  print $fh <<EOF;
+  print $fh <<EOF2;
 all:
-\tperl -e 'print "all"' > all.txt
+\tperl -MUtil -e print_all all
 
 install:
-\tperl -e 'print "install:" . shift \@ARGV' \$(DEST_DIR) > install.txt
+\tperl -MUtil -e print_install install
 
-EOF
+EOF2
   close $fh;
   open($fh, '>', File::Spec->catfile($dir, 'configure'));
   print $fh "#!/bin/sh\n";
@@ -45,27 +55,17 @@ isa_ok $builder, 'Alien::Xenolith::Builder';
 my $error;
 my $out;
 
-$out = capture_merged {
+note capture_merged {
   eval { $builder->build };
   $error = $@;
 };
 is $error, '', 'build';
-if($error)
-{
-  diag $out;
-  diag $error;
-}
 
-$out = capture_merged {
+note capture_merged {
   eval { $builder->stage('/foo/bar') };
   $error = $@;
 };
 is $error, '', 'stage';
-if($error)
-{
-  diag $out;
-  diag $error;
-}
 
 note do { 
   my $fh;
@@ -77,7 +77,7 @@ note do {
 
 my $data = do {
   my $fh;
-  open($fh, '<', File::Spec->catfile($dir, 'install.txt'));
+  open($fh, '<', File::Spec->catfile($dir, 'install'));
   my $data = <$fh>;
   close $fh;
   $data;
