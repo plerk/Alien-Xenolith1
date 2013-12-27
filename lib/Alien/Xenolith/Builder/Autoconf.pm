@@ -15,6 +15,21 @@ requires 'Alien::MSYS' => 0 if $^O eq 'MSWin32';
 
 =head1 METHODS
 
+=head2 new
+
+ my $builder = Alien::Xenolith::Builder::Autoconf->new;
+
+Create a new instance of the autoconf builder.
+
+=cut
+
+sub new
+{
+  my($class, %args) = @_;
+  my $self = $class->SUPER::new(%args);
+  $self;
+}
+
 =head2 build
 
  $builder->build;
