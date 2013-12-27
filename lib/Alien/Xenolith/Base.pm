@@ -65,10 +65,7 @@ sub _with ($)
 {
   my($class) = @_;
   my $caller = caller;
-  my @filename = split /::/, $class;
-  $filename[-1] .= '.pm';
-  my $filename = File::Spec->catfile(@filename);
-  require $filename;
+  eval qq{ use $class () };
   %{ $needs{$caller} } = map { %$_ } map { $needs{$_} || {} } ($class, $caller);
   
   while(my($name,$sub) = each %{ $around{$class} })
