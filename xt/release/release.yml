@@ -4,6 +4,8 @@ pod_spelling_system:
   # (regardless of what spell check thinks)
   stopwords:
     - Xenolith
+    - CMake
+    - Autoconf
 
 pod_coverage:
   # format is "Class#method" or "Class", regex allowed

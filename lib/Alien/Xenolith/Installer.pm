@@ -8,3 +8,4 @@ use base qw( Alien::Xenolith::Base );
 # VERSION
 
 1;
+
