@@ -24,7 +24,7 @@ sub new
   bless {}, $class;
 }
 
-my %req;
+my %needs;
 
 sub _needs_hash
 {
@@ -34,7 +34,7 @@ sub _needs_hash
   {
     %r = (%r, %{ $baseclass->_needs_hash });
   }
-  %r = (%r, %{ $req{$class} || {} });
+  %r = (%r, %{ $needs{$class} || {} });
   \%r;
 }
 
@@ -55,11 +55,10 @@ sub _needs ($;$)
   my($package, $version) = @_;
   $version = 0 unless defined $version;
   my $caller = caller;
-  $req{$caller}->{$package} = $version;
+  $needs{$caller}->{$package} = $version;
 }
 
 my %around;
-my %default;
 
 sub _with ($)
 {
@@ -69,7 +68,7 @@ sub _with ($)
   $filename[-1] .= '.pm';
   my $filename = File::Spec->catfile(@filename);
   require $filename;
-  %{ $req{$caller} } = map { %$_ } map { $req{$_} || {} } ($class, $caller);
+  %{ $needs{$caller} } = map { %$_ } map { $needs{$_} || {} } ($class, $caller);
   
   while(my($name,$sub) = each %{ $around{$class} })
   {
