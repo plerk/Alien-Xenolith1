@@ -23,6 +23,8 @@ touch 'libfoo-1.2.3.tar.gz';
 touch 'libbar-1.2.3.tar.gz';
 touch 'libfoo-1.3.2.tar.gz';
 
+note_needs 'Alien::Xenolith::Fetch::File';
+
 foreach my $testname ('regex filter', 'string filter', 'subref filter')
 {
   subtest $testname => sub

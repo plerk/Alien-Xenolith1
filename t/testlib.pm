@@ -56,4 +56,16 @@ sub extracted_to_ok ($;$)
   is $last_extracted_location, $dir, $testname;
 }
 
+sub note_needs ($)
+{
+  my($class) = @_;
+  
+  my $needs = $class->_needs_hash;
+  
+  foreach my $name (sort keys %$needs)
+  {
+    note sprintf "needs %-20s = %s\n", $name, $needs->{$name};
+  }
+}
+
 1;
