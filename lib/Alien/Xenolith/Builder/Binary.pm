@@ -6,6 +6,7 @@ use base qw( Alien::Xenolith::Builder );
 use Alien::Xenolith::Base;
 use File::Find qw( find );
 use File::Copy qw( cp );
+use File::Path qw( mkpath );
 
 # ABSTRACT: Binary builder class for Xenolith
 # VERSION
@@ -49,15 +50,15 @@ sub stage
     if(! -d $File::Find::name)
     {
       my $src = $File::Find::name;
-      my $dst = File::Spec->catfile($dest, $dir, $file);
+      my $dst = File::Spec->catfile($dest, $self->prefix, $dir, $file);
       print "cp $src $dst\n";
       cp($src, $dst) || die "unable to copy $!";
     }
     else
     {
-      my $dst = File::Spec->catdir($dest, $dir, $file);
+      my $dst = File::Spec->catdir($dest, $self->prefix, $dir, $file);
       print "mkdir $dst\n";
-      mkdir $dst;
+      mkpath $dst, 0, 0755;
     }
   }, $build_dir);
 }

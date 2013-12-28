@@ -34,7 +34,8 @@ foreach my $file (@files)
 #note `ls -lR $build_dir`;
 
 my $builder = Alien::Xenolith::Builder::Binary->new(
-  build_dir => $build_dir
+  build_dir => $build_dir,
+  prefix    => '/foo/bar/',
 );
 
 isa_ok $builder, 'Alien::Xenolith::Builder::Binary';
@@ -53,12 +54,12 @@ note capture_merged {
 };
 is $error, '', 'build';
 
-foreach my $dir (map { File::Spec->catdir($stage_dir, @$_) } @dirs)
+foreach my $dir (map { File::Spec->catdir($stage_dir, qw( foo bar ), @$_) } @dirs)
 {
   ok -d $dir, "dir exists $dir";
 }
 
-foreach my $file (map { File::Spec->catfile($stage_dir, @$_) } @files)
+foreach my $file (map { File::Spec->catfile($stage_dir, qw( foo bar ), @$_) } @files)
 {
   ok -r $file, "file exists $file";
 }

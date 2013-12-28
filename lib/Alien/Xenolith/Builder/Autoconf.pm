@@ -46,7 +46,7 @@ sub build
     if($^O eq 'MSWin32')
     {
       Alien::MSYS::msys(sub {
-        system 'sh', 'configure', '--prefix=/foo';
+        system 'sh', 'configure', ($self->prefix ? ('--prefix=' . $self->prefix) : ());
         if($? == -1)
         { die "make failed to execute $!" }
         elsif($? & 127)
@@ -57,7 +57,7 @@ sub build
     }
     else
     {
-      system './configure', '--prefix=/foo';
+      system './configure', ($self->prefix ? ('--prefix=' . $self->prefix) : ());
       if($? == -1)
       { die "make failed to execute $!" }
       elsif($? & 127)

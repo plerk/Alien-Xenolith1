@@ -38,7 +38,7 @@ Runs make.
 sub build
 {
   my($self) = @_;
-  $self->make;
+  $self->make('PREFIX=' . $self->prefix);
 }
 
 1;
