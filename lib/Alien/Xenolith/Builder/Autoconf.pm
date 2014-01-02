@@ -41,32 +41,46 @@ runs ./configure and make
 sub build
 {
   my($self) = @_;
-  do {
-    local $CWD = $self->build_dir;
-    if($^O eq 'MSWin32')
-    {
-      Alien::MSYS::msys(sub {
-        system 'sh', 'configure', ($self->prefix ? ('--prefix=' . $self->prefix) : ());
-        if($? == -1)
-        { die "make failed to execute $!" }
-        elsif($? & 127)
-        { die "died with signal " . ($? & 127) }
-        elsif($?)
-        { die "exited with return " . ($? >> 8) }
-      });
-    }
-    else
-    {
-      system './configure', ($self->prefix ? ('--prefix=' . $self->prefix) : ());
+  $self->run;
+  $self->make;
+}
+
+=head2 run
+
+ $builder->run(@arguments);
+
+runs ./configure with the given arguments.
+
+=cut
+
+
+sub run
+{
+  my($self, @command_line) = @_;
+
+  local $CWD = $self->build_dir;
+  if($^O eq 'MSWin32')
+  {
+    Alien::MSYS::msys(sub {
+      system 'sh', 'configure', ($self->prefix ? ('--prefix=' . $self->prefix) : ());
       if($? == -1)
       { die "make failed to execute $!" }
       elsif($? & 127)
       { die "died with signal " . ($? & 127) }
       elsif($?)
       { die "exited with return " . ($? >> 8) }
-    }
-  };
-  $self->make;
+    });
+  }
+  else
+  {
+    system './configure', ($self->prefix ? ('--prefix=' . $self->prefix) : ());
+    if($? == -1)
+    { die "make failed to execute $!" }
+    elsif($? & 127)
+    { die "died with signal " . ($? & 127) }
+    elsif($?)
+    { die "exited with return " . ($? >> 8) }
+  }
 }
 
 1;

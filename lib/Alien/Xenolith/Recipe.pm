@@ -87,7 +87,7 @@ foreach my $type (qw( HTTP FTP File  ))
     my($code) = @_;
     require "Alien/Xenolith/Fetch/$type.pm";
     local $block = 'fetch';
-    local %args = ();
+    local %args = %args;
     $code->();
     "Alien::Xenolith::Fetch::$type"->new(%args);
   };
@@ -103,7 +103,6 @@ sub _builder
   unless($self->{builder}->{$name})
   {
     require "Alien/Xenolith/Builder/$name.pm";
-    $DB::single = 1;
     $self->{builder}->{$name} = "Alien::Xenolith::Builder::$name";
     $recipe->_add_needs($self->{builder}->{$name});
   }
@@ -144,6 +143,14 @@ sub _kw_build (&)
   my($code) = @_;
   local $block = 'build';
   $code->();
+}
+
+sub _kw_install ($)
+{
+}
+
+sub _kw_default ()
+{
 }
 
 sub _package

@@ -38,7 +38,21 @@ Runs make.
 sub build
 {
   my($self) = @_;
-  $self->make('PREFIX=' . $self->prefix);
+  $self->run('PREFIX=' . $self->prefix);
+}
+
+=head2 run
+
+ $builder->run(@arguments);
+
+Runs make with the given arguments;
+
+=cut
+
+sub run
+{
+  my($self, @args) = @_;
+  $self->make(@args);
 }
 
 1;

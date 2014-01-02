@@ -28,6 +28,19 @@ sub build
   print "no build step\n";
 }
 
+=head2 run
+
+ $builder->run;
+
+Again, for binary install this doesn't do anything.
+
+=cut
+
+sub run
+{
+  print "no run\n";
+}
+
 =head2 stage
 
  $builder->stage($dir);
