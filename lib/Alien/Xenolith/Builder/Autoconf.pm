@@ -8,7 +8,7 @@ use File::chdir;
 
 with 'Alien::Xenolith::Role::Make';
 
-requires 'Alien::MSYS' => 0 if $^O eq 'MSWin32';
+needs 'Alien::MSYS' => 0 if $^O eq 'MSWin32';
 
 # ABSTRACT: Autoconf builder class for Xenolith
 # VERSION

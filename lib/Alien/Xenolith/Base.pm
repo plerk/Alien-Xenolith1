@@ -20,7 +20,7 @@ sub new
 {
   my $class = shift;
   croak "cannot create instance of abstract class"
-    if $class =~ /^Alien::Xenolith::(Fetch|Builder|Base)$/;
+    if $class =~ /^Alien::Xenolith::(Fetch|Builder|Base|Installer)$/;
   bless {}, $class;
 }
 
