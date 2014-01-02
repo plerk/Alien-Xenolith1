@@ -53,5 +53,17 @@ sub prefix
   shift->{prefix};
 }
 
+sub installer
+{
+  my($self, $value) = @_;
+  
+  if(defined $value)
+  {
+    $self->{installer} = $value;
+  }
+  
+  $self->{installer};
+}
+
 1;
 

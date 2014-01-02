@@ -40,4 +40,16 @@ sub fetch_tempdir
   $fetch_tempdir;
 }
 
+sub builder
+{
+  my($self, $value) = @_;
+  
+  if(defined $value)
+  {
+    $self->{builder} = $value;
+  }
+  
+  $self->{builder};
+}
+
 1;

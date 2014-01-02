@@ -38,7 +38,6 @@ sub new
     filename => $args{filename},
     needs    => {},
     fetch    => [],
-    build    => [],
   }, $class;
 }
 
@@ -150,6 +149,18 @@ sub _kw_install ($)
 }
 
 sub _kw_default ()
+{
+}
+
+sub _kw_needs ($$)
+{
+}
+
+sub _kw_system_package (&)
+{
+}
+
+sub _kw_compile_test_c ($)
 {
 }
 
